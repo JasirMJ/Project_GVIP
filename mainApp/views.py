@@ -9,9 +9,12 @@ from datetime import datetime
 
 # Create your views here.
 
-# class MainAppAPI(ListAPIView):
-#     def get(self):
-#         return Response()
+class SpeakView(ListAPIView):
+    def get(self,request):
+        message = self.request.GET.get('message',"")
+        print(message)
+        speak(message)
+        return JsonResponse({'status':1,'message':'success'})
 
 API_KEY = "cc02eecfa892c5ad1a78c3e49bbc3a8a"
 

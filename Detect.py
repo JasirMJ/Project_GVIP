@@ -8,6 +8,7 @@
 import cv2
 import argparse
 import numpy as np
+import requests
 
 config_path = 'yolov3.cfg'
 weights_path ='yolov3.weights'
@@ -131,7 +132,20 @@ while True:
         objectname = str(classes[class_ids[i]])
         print("Class ID : ", objectname , "Confidence : ", confidences[i])
         if objectname in dangerous_objects:
-            print("Alert :: Dangerous object detected ", objectname)
+            
+            msg = "Alert :: Dangerous object detected " + objectname
+            print(msg)
+            server = "http://localhost:8000/speak/?message=" + msg
+            try:
+                res = requests.get(server)
+                if res:
+                    print("Speech output sent")
+                else:
+                    print("Speech output not sent, ensure server is running")
+            except Exception as e:
+                print(e)
+                print("Error while sending request, Ensure server is running")
+
             
 
     # cv2.imshow("object detection", image)
