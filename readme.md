@@ -1,4 +1,4 @@
-# Object Dection for Visually disabled persons
+# Object Detection for Visually disabled persons
 
 
 * Clone the project
