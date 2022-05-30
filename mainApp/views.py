@@ -68,7 +68,7 @@ def speak(audioString):
     rate = engine.getProperty('rate')
     volume = engine.getProperty('volume')
     voices = engine.getProperty('voices')
-    engine.setProperty('voice', "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0")
+    # engine.setProperty('voice', "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0")
 
     engine.say(audioString)
     engine.runAndWait()
