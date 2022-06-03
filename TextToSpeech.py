@@ -18,11 +18,11 @@ loc = Nominatim(user_agent="GetLoc")
 getLoc = loc.geocode("Gosainganj Lucknow")
 
 # printing address
-print(getLoc.address)
-
-# printing latitude and longitude
-print("Latitude = ", getLoc.latitude, "\n")
-print("Longitude = ", getLoc.longitude)
+# print(getLoc.address)
+#
+# # printing latitude and longitude
+# print("Latitude = ", getLoc.latitude, "\n")
+# print("Longitude = ", getLoc.longitude)
 
 
 def speak(audioString):
@@ -94,10 +94,12 @@ def recordAudio():
     except sr.RequestError as e:
         print("Could not request results; {0}".format(e))
         return  "Not clear"
-
-    except sr.UnknownValueError:
-        print("unknown error occured")
-        return "Unknown error occured"
+    except Exception as e:
+        print("unknown error occured ",e)
+        return 0
+    # except sr.UnknownValueError:
+    #     print("unknown error occured ",sr.UnknownValueError)
+    #     return 0
 
 
 def jarvis(data):
@@ -112,7 +114,7 @@ def jarvis(data):
         print("GVIP : ", message)
         speak(message)
 
-    if "name" or "what is your name" in data:
+    if "name"  in data:
         message = "My name is jasi version 1.0 developed as a prototype"
         print("GVIP : ", message)
         speak(message)
@@ -121,6 +123,25 @@ def jarvis(data):
         message = "One day i will become something"
         print("GVIP : ", message)
         speak(message)
+
+    if "tell me a joke" in data:
+
+        url = "https://v2.jokeapi.dev/joke/Any"
+        res = requests.get(url)
+        res = res.json()
+        qs = res['setup']
+        ans = res['delivery']
+        print(qs)
+        print(ans)
+        speak("here is the question.")
+        speak(qs)
+        time.sleep(1)
+
+        speak("Here is the answer.")
+        speak(ans)
+
+
+
 
     if "what is your name" in data:
         message = "My name is Gvip version 1.0 developed as a prototype"
@@ -170,14 +191,23 @@ def jarvis(data):
         # speak("Hold on Frank, I will show you where " + location + " is.")
         # os.system("chromium-browser https://www.google.nl/maps/place/" + location + "/&amp;")
         # os.system("chrome https://www.google.nl/maps/place/" + location + "/&amp;")
+    return False
 
 # initialization
 time.sleep(2)
 speak("Hi Jasir, what can I do for you?")
 
+
+
+
+
+#
 while 1:
     data = recordAudio()
-    exit = jarvis(data)
+    if data:
+        exit = jarvis(data)
+    else:
+        print("Skipped")
 
     print("exit ? ",exit)
     if exit:
