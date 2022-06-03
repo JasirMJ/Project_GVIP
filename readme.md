@@ -4,7 +4,8 @@
 * Clone the project
 * token : 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
 * Create virtual environment
-* Activate virtual environment command: source venv/bin/activate
+* Activate virtual environment command: 
+source venv/bin/activate
 
 * RUN : pip install -r requirements.txt
 * COCO Dataset Download Link : https://pjreddie.com/media/files/yolov3.weights

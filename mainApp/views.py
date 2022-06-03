@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from django.http import JsonResponse
 from datetime import datetime
+from os import system
+
 
 # Create your views here.
 import threading
@@ -57,19 +59,24 @@ def get_weather(request):
     speak(msg)
     return JsonResponse({"message":msg, "status":1,"data":res})
 
+
+
+
 def speak(audioString):
     print("spekaing " ,audioString)
     #
 
 
     engine = pyttsx3.init()
-
+    #
     if engine._inLoop:
         print("Engine loop ",engine._inLoop)
         engine.endLoop()
         print("engine loop stopped")
         print("Engine loop ",engine._inLoop)
+    #
 
+    # engine.startLoop(False)
 
     # rate = engine.getProperty('rate')
     volume = engine.getProperty('volume')
@@ -81,24 +88,12 @@ def speak(audioString):
     # voices = engine.getProperty('voices')
     # # engine.setProperty('voice', "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0")
     #
+    print("Voice speaking")
+
     engine.say(audioString)
     engine.runAndWait()
 
-    # engine = pyttsx3.init()
-    # engine.say(audioString)
-    # engine.startLoop(False)
-    # # engine.iterate() must be called inside Server_Up.start()
-    # Server_Up = threading.Thread(target=Comm_Connection)
-    # Server_Up.start()
-    # engine.endLoop()
+    print("Voice speaking completed")
 
-
-    #
-    # print(audioString)
-    # # tts = gTTS(text=audioString, lang='en')
-    #
-    # engine = pyttsx3.init()
-    # engine.say(audioString)
-    # engine.runAndWait()
 
     print("Audio message worked")
