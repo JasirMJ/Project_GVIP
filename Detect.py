@@ -8,13 +8,16 @@
 import cv2
 import argparse
 import numpy as np
+import pyttsx3
+
 import requests
+from os import system
 
 config_path = 'yolov3.cfg'
 weights_path ='yolov3.weights'
 classes_path =  'yolov3.txt'
 
-dangerous_objects = ['car','motorcycle','bus','train','truck','bear','zebra',]
+dangerous_objects = ['person','car','motorcycle','bus','train','truck','bear','zebra',]
 
 ap = argparse.ArgumentParser()
 # ap.add_argument('-i', '--image', required=True,
@@ -131,22 +134,27 @@ while True:
         draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
         objectname = str(classes[class_ids[i]])
         print("Class ID : ", objectname , "Confidence : ", confidences[i])
-        if objectname in dangerous_objects:
+        if objectname in dangerous_objects and confidences[i] > 0.9:
             
-            msg = "Alert :: Dangerous object detected " + objectname
+            msg = "Alert, Dangerous object detected " + objectname
             print(msg)
-            server = "http://localhost:8000/speak/?message=" + msg
-            try:
-                res = requests.get(server)
-                if res:
-                    print("Speech output sent")
-                else:
-                    print("Speech output not sent, ensure server is running")
-            except Exception as e:
-                print(e)
-                print("Error while sending request, Ensure server is running")
 
-            
+            engine = pyttsx3.init()
+            engine.say(msg)
+            engine.runAndWait()
+
+            # server = "http://localhost:8000/speak/?message=" + msg
+            # try:
+            #     res = requests.get(server)
+            #     if res:
+            #         print("Speech output sent")
+            #     else:
+            #         print("Speech output not sent, ensure server is running")
+            # except Exception as e:
+            #     print(e)
+            #     print("Error while sending request, Ensure server is running")
+    # cv2.waitKey()
+    # cv2.destroyAllWindows()
 
     # cv2.imshow("object detection", image)
     # cv2.waitKey()
