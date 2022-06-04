@@ -62,6 +62,22 @@ def recordAudio():
 
 def jarvis(data):
 
+    if "tell me a joke" in data:
+
+        url = "https://v2.jokeapi.dev/joke/Any"
+        res = requests.get(url)
+        res = res.json()
+        qs = res['setup']
+        ans = res['delivery']
+        print(qs)
+        print(ans)
+        speak("here is the question.")
+        speak(qs)
+        time.sleep(1)
+
+        speak("Here is the answer.")
+        speak(ans)
+
     if "check" in data:
         message = "what you want to check"
         print("GVIP : ",message)
@@ -133,25 +149,33 @@ def jarvis(data):
 
 
 # initialization
-time.sleep(2)
+# time.sleep(2)
 speak("Hi Jasir, what can I do for you?")
 
+
 detect = False
+tellobjects = False
 exit=False
 
 config_path = 'yolov3.cfg'
 weights_path = 'yolov3.weights'
 classes_path = 'yolov3.txt'
 
-dangerous_objects = ['person', 'car', 'motorcycle', 'bus', 'train', 'truck', 'bear', 'zebra', ]
+dangerous_objects = [
+    #'person',
+    'car', 'motorcycle', 'bus', 'train', 'truck', 'bear', 'zebra', ]
 
 video = cv2.VideoCapture(0)
 # Initialize the recognizer
 r = sr.Recognizer()
 
-while 1:
-    data = recordAudio()
+print("Starting ...")
 
+while 1:
+    objects = []
+
+    data = recordAudio()
+    print("voice ")
     if detect:
         hasFrame, image = video.read()
         Width = image.shape[1]
@@ -192,6 +216,7 @@ while 1:
 
         indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
 
+
         for i in indices:
             i = i
             box = boxes[i]
@@ -202,11 +227,38 @@ while 1:
             draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x + w), round(y + h))
             objectname = str(classes[class_ids[i]])
             print("Class ID : ", objectname, "Confidence : ", confidences[i])
+
+            objects.append({"name":objectname,"confidences":format(confidences[i], ".2f")})
+
             if objectname in dangerous_objects and confidences[i] > 0.9:
                 msg = "Alert, Dangerous object detected " + objectname
                 print(msg)
                 speak(msg)
 
+
+        # cv2.imshow("object detection", image)
+        # cv2.waitKey()
+        #
+        # cv2.imwrite(objectname+".jpg", image)
+        # cv2.destroyAllWindows()
+
+
+
+    if data =="object on":
+        tellobjects = True
+        speak("I will update the objects what I'm able to understant.")
+    if data=="object off":
+        tellobjects = False
+        speak("Thank you, another time")
+
+
+    if tellobjects:
+        print(objects)
+        print(type(objects))
+        msg = "I can see "
+        for object in objects:
+            msg += f" object {object['name']} with confidence {object['confidences']}, "
+        speak(msg)
 
     if data=="open eyes":
         detect = True
