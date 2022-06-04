@@ -25,6 +25,7 @@ import pyttsx3
 # print("Longitude = ", getLoc.longitude)
 
 def speak(audioString):
+    print(audioString)
     engine = pyttsx3.init()
     engine.say(audioString)
     engine.runAndWait()
@@ -63,20 +64,25 @@ def recordAudio():
 def jarvis(data):
 
     if "tell me a joke" in data:
+        try:
 
-        url = "https://v2.jokeapi.dev/joke/Any"
-        res = requests.get(url)
-        res = res.json()
-        qs = res['setup']
-        ans = res['delivery']
-        print(qs)
-        print(ans)
-        speak("here is the question.")
-        speak(qs)
-        time.sleep(1)
+            url = "https://v2.jokeapi.dev/joke/Any"
+            res = requests.get(url)
+            res = res.json()
+            print("response received ",res)
+            qs = res['setup']
+            ans = res['delivery']
+            print(qs)
+            print(ans)
+            speak("here is the question.")
+            speak(qs)
+            time.sleep(1)
 
-        speak("Here is the answer.")
-        speak(ans)
+            speak("Here is the answer.")
+            speak(ans)
+        except Exception as e:
+            print("Excepcyion occured",e)
+            speak("something went wrong HA HA HA")
 
     if "check" in data:
         message = "what you want to check"
@@ -244,10 +250,10 @@ while 1:
 
 
 
-    if data =="object on":
+    if data =="open object":
         tellobjects = True
         speak("I will update the objects what I'm able to understant.")
-    if data=="object off":
+    if data=="close object":
         tellobjects = False
         speak("Thank you, another time")
 
