@@ -7,6 +7,12 @@ import time
 import cv2
 import numpy as np
 import pyttsx3
+import pytesseract
+
+import os
+
+if os.name=='nt':
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 # # importing geopy library
 # from geopy.geocoders import Nominatim
@@ -44,11 +50,16 @@ def draw_prediction(img, class_id, confidence, x, y, x_plus_w, y_plus_h):
 def recordAudio():
     try:
         with sr.Microphone() as source2:
+            print("adjust for ambient noise init")
             r.adjust_for_ambient_noise(source2, duration=1)
+            print("adjust for ambient noise set")
             audio2 = r.listen(source2)
+            print("audio receieved")
 
             # Using google to recognize audio
+            print("Using google to recognize audio")
             MyText = r.recognize_google(audio2)
+            print("recognize completed")
             MyText = MyText.lower()
             print("Did you say " + MyText)
             return  MyText
@@ -162,6 +173,8 @@ speak("Hi Jasir, what can I do for you?")
 detect = False
 tellobjects = False
 exit=False
+read_text = False
+
 
 config_path = 'yolov3.cfg'
 weights_path = 'yolov3.weights'
@@ -176,12 +189,53 @@ video = cv2.VideoCapture(0)
 r = sr.Recognizer()
 
 print("Starting ...")
-
+speak("All set speak now")
 while 1:
     objects = []
 
     data = recordAudio()
-    print("voice ")
+
+    if "read text" in data:
+        detect=False
+        tellobjects = False
+        read_text = True
+        speak("Place the object infront of you, i will read it for you as i can")
+
+    if read_text :
+        video = cv2.VideoCapture(0)
+
+        while True:
+            hasFrame, image = video.read()
+            img1 = np.array(image)
+            text = pytesseract.image_to_string(img1)
+            if len(text) > 3:
+                print("Text is ", text)
+                speak("Text is : "+text)
+                speak("This is what i understand")
+                break
+
+        speak("Do you got it ? want to try again say yes ?")
+        flag = recordAudio()
+
+        if "yes" in flag:
+            print("ok i will read once again for you")
+            speak("ok i will read once again for you")
+        else:
+            video.release()
+            speak("ok, next time, till then bye")
+            read_text = False
+
+
+    if data =="open object":
+        tellobjects = True
+        detect = True
+        speak("I will update the objects what I'm able to understant.")
+
+    if data=="close object":
+        tellobjects = False
+        speak("Thank you, another time")
+
+
     if detect:
         hasFrame, image = video.read()
         Width = image.shape[1]
@@ -249,18 +303,7 @@ while 1:
         # cv2.destroyAllWindows()
 
 
-
-    if data =="open object":
-        tellobjects = True
-        speak("I will update the objects what I'm able to understant.")
-    if data=="close object":
-        tellobjects = False
-        speak("Thank you, another time")
-
-
     if tellobjects:
-        print(objects)
-        print(type(objects))
         msg = "I can see "
         for object in objects:
             msg += f" object {object['name']} with confidence {object['confidences']}, "

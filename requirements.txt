@@ -20,6 +20,7 @@ opencv-python==4.5.5.62
 packaging==21.3
 pipwin==0.5.2
 PyAudio @ file:///C:/Users/Codedady%20Jasir/pipwin/PyAudio-0.2.11-cp39-cp39-win32.whl
+pytesseract @ file:///C:/Program%20Files/Tesseract-OCR/tesseract.exe
 pyjsparser==2.7.1
 pyparsing==3.0.9
 PyPrind==2.11.3
