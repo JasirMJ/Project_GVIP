@@ -167,7 +167,7 @@ def jarvis(data):
 
 # initialization
 # time.sleep(2)
-speak("Hi Jasir, what can I do for you?")
+speak("Hi Azra, what can I do for you?")
 
 
 detect = False
@@ -195,7 +195,7 @@ while 1:
 
     data = recordAudio()
 
-    if "read text" in data:
+    if "text read" in data:
         detect=False
         tellobjects = False
         read_text = True
