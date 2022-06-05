@@ -235,7 +235,6 @@ while 1:
         tellobjects = False
         speak("Thank you, another time")
 
-
     if detect:
         hasFrame, image = video.read()
         Width = image.shape[1]
