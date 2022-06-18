@@ -163,7 +163,7 @@ def jarvis(data):
         # speak("Hold on Frank, I will show you where " + location + " is.")
         # os.system("chromium-browser https://www.google.nl/maps/place/" + location + "/&amp;")
         # os.system("chrome https://www.google.nl/maps/place/" + location + "/&amp;")
-
+    return False
 
 # initialization
 # time.sleep(2)
@@ -193,7 +193,8 @@ speak("All set speak now")
 while 1:
     objects = []
 
-    data = recordAudio()
+    data = recordAudio() # take input as voice commands
+    # data = input("enter your command : ") # take input as text msg
 
     if "text read" in data:
         detect=False
@@ -214,7 +215,7 @@ while 1:
                 speak("This is what i understand")
                 break
 
-        speak("Do you got it ? want to try again say yes ?")
+        speak("Do you get it ? want to try again say yes ?")
         flag = recordAudio()
 
         if "yes" in flag:
