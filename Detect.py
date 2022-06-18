@@ -87,7 +87,7 @@ while True:
     #
     # print("Image readed")
 
-    image = cv2.resize(frame, (300, 300))
+    image = cv2.resize(frame, (800, 800))
 
     Width = image.shape[1]
     Height = image.shape[0]

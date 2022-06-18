@@ -13,4 +13,5 @@ source venv/bin/activate
 * place the weights file in the same directory where manage.py is present
 * Run the django server : python manage.py runserver
 * Run the python file : python Dectect.py
+News API key: 498b712c865a429496403df3698c9dcb
 
