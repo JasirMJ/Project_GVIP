@@ -170,7 +170,7 @@ def jarvis(data):
 speak("Hi Azra, what can I do for you?")
 
 
-detect = True
+detect = False
 tellobjects = False
 exit=False
 read_text = False
@@ -185,9 +185,14 @@ classes_path = 'yolov3.txt'
 dangerous_objects = [#'person',
     'car', 'motorcycle', 'bus', 'train', 'truck', 'bear', 'zebra', ]
 
+print("Please wait Video Initializing...")
 video = cv2.VideoCapture(0)
+print("Please wait VideoStream  Initializing...")
+vs = VideoStream(src=0).start()
 # Initialize the recognizer
-r = sr.Recognizer()
+print("Please wait Speach recognizer Initializing...")
+# r = sr.Recognizer()
+r = None
 fps = FPS().start()
 
 print("Starting ...")
@@ -278,7 +283,7 @@ while 1:
 
     if detect:
         # hasFrame, image = video.read()
-        frame = video.read()
+        frame = vs.read()
         image = cv2.resize(frame, (800, 800))
 
         Width = image.shape[1]
@@ -384,4 +389,4 @@ print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 # do a bit of cleanup
 cv2.destroyAllWindows()
-video.stop()
+vs.stop()
