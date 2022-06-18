@@ -8,7 +8,6 @@ import cv2
 import numpy as np
 import pyttsx3
 import pytesseract
-
 import os
 
 if os.name=='nt':
@@ -16,16 +15,12 @@ if os.name=='nt':
 
 # # importing geopy library
 # from geopy.geocoders import Nominatim
-#
 # # calling the Nominatim tool
 # loc = Nominatim(user_agent="GetLoc")
-#
 # # entering the location name
 # getLoc = loc.geocode("Gosainganj Lucknow")
-#
 # # printing address
 # print(getLoc.address)
-#
 # # printing latitude and longitude
 # print("Latitude = ", getLoc.latitude, "\n")
 # print("Longitude = ", getLoc.longitude)
@@ -71,7 +66,6 @@ def recordAudio():
         print("unknown error occured")
         return "Unknown error occured"
 
-
 def jarvis(data):
 
     if "tell me a joke" in data:
@@ -106,7 +100,7 @@ def jarvis(data):
         speak(message)
 
     if "name" in data:
-        message = "My name is jasi version 1.0 developed as a prototype"
+        message = "My name is Azra version 1.0 developed as a prototype"
         print("GVIP : ", message)
         speak(message)
 
@@ -126,7 +120,7 @@ def jarvis(data):
         speak(message)
 
     if "you work for" in data:
-        message = "Jasir"
+        message = "Azra"
         print("GVIP : ", message)
         speak(message)
 
@@ -175,13 +169,11 @@ tellobjects = False
 exit=False
 read_text = False
 
-
 config_path = 'yolov3.cfg'
 weights_path = 'yolov3.weights'
 classes_path = 'yolov3.txt'
 
-dangerous_objects = [
-    #'person',
+dangerous_objects = [#'person',
     'car', 'motorcycle', 'bus', 'train', 'truck', 'bear', 'zebra', ]
 
 video = cv2.VideoCapture(0)
@@ -190,6 +182,7 @@ r = sr.Recognizer()
 
 print("Starting ...")
 speak("All set speak now")
+
 while 1:
     objects = []
 
@@ -225,7 +218,6 @@ while 1:
             video.release()
             speak("ok, next time, till then bye")
             read_text = False
-
 
     if data =="open object":
         tellobjects = True
@@ -302,9 +294,9 @@ while 1:
         # cv2.imwrite(objectname+".jpg", image)
         # cv2.destroyAllWindows()
 
-
     if tellobjects:
-        msg = "I can see "
+        msg = "I can see " #I can see object car with confidence 0.98,
+                            # object jeep with confidence  0.98,
         for object in objects:
             msg += f" object {object['name']} with confidence {object['confidences']}, "
         speak(msg)
