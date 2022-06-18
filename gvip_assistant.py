@@ -9,6 +9,12 @@ import numpy as np
 import pyttsx3
 import pytesseract
 import os
+import requests
+
+from imutils.video import VideoStream
+from imutils.video import FPS
+import imutils
+import time
 
 if os.name=='nt':
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -45,9 +51,9 @@ def draw_prediction(img, class_id, confidence, x, y, x_plus_w, y_plus_h):
 def recordAudio():
     try:
         with sr.Microphone() as source2:
-            print("adjust for ambient noise init")
+            # print("adjust for ambient noise init")
             r.adjust_for_ambient_noise(source2, duration=1)
-            print("adjust for ambient noise set")
+            print("Speak Now")
             audio2 = r.listen(source2)
             print("audio receieved")
 
@@ -169,6 +175,9 @@ tellobjects = False
 exit=False
 read_text = False
 
+
+
+
 config_path = 'yolov3.cfg'
 weights_path = 'yolov3.weights'
 classes_path = 'yolov3.txt'
@@ -179,6 +188,7 @@ dangerous_objects = [#'person',
 video = cv2.VideoCapture(0)
 # Initialize the recognizer
 r = sr.Recognizer()
+fps = FPS().start()
 
 print("Starting ...")
 speak("All set speak now")
@@ -188,6 +198,44 @@ while 1:
 
     data = recordAudio() # take input as voice commands
     # data = input("enter your command : ") # take input as text msg
+
+    if "latest news" in data :
+        country = "in"
+
+        speak("Tell me the news topic.")
+        while 1:
+            category = recordAudio()
+            if len(category):
+                break
+            print("Received Category is ",category)
+
+        url = (
+            f"https://newsapi.org/v2/top-headlines?country={country}&category={category}&apiKey=498b712c865a429496403df3698c9dcb")
+        response = requests.get(url)
+        newdata = response.json()
+
+        if len(newdata['articles']):
+            for index, news in enumerate(newdata['articles']):
+                title = str(index + 1) +" : "+ news['title']
+                description = news['description']
+                print(index + 1, " : ", news['title'])
+
+                speak("Headline : " + title)
+                speak("Do you want to read description?")
+                read = recordAudio()
+                if "yes" in read:
+                    desc = "Description : "+ news['description']
+                    print()
+                    print("------------------------------------------------------------")
+                    speak(desc)
+                else:
+                    speak("ok, will go for next one.")
+
+
+        else:
+            msg = f"No matching news found for {category}"
+            speak(msg)
+
 
     if "text read" in data:
         detect=False
@@ -268,7 +316,7 @@ while 1:
 
         indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
 
-
+        msg = ""
         for i in indices:
             i = i
             box = boxes[i]
@@ -285,8 +333,16 @@ while 1:
             if objectname in dangerous_objects and confidences[i] > 0.9:
                 msg = "Alert, Dangerous object detected " + objectname
                 print(msg)
-                speak(msg)
 
+
+        cv2.imshow("Frame", image)
+        key = cv2.waitKey(1) & 0xFF
+        if len(msg):speak(msg)
+
+        # if the `q` key was pressed, break from the loop
+        if key == ord("q") : break
+        # update the FPS counter
+        fps.update()
 
         # cv2.imshow("object detection", image)
         # cv2.waitKey()
@@ -295,8 +351,8 @@ while 1:
         # cv2.destroyAllWindows()
 
     if tellobjects:
-        msg = "I can see " #I can see object car with confidence 0.98,
-                            # object jeep with confidence  0.98,
+        msg = "I can see " # I can see object car with confidence 0.98,
+                           # object jeep with confidence  0.98,
         for object in objects:
             msg += f" object {object['name']} with confidence {object['confidences']}, "
         speak(msg)
@@ -318,3 +374,11 @@ while 1:
     if exit:
         break
 
+
+fps.stop()
+print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
+print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+
+# do a bit of cleanup
+cv2.destroyAllWindows()
+video.stop()

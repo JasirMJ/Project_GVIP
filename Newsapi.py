@@ -1,24 +1,26 @@
-from newsapi import NewsApiClient
+import requests
 
-# Init
-newsapi = NewsApiClient(api_key='498b712c865a429496403df3698c9dcb')
+country = "in"
+category = "sports"
+# url = (f"https://newsapi.org/v2/top-headlines?country={country}&category={category}&apiKey=498b712c865a429496403df3698c9dcb")
+# response = requests.get(url)
+# newdata = response.json()
+#
+# if len(newdata['articles']):
+#     for index,news in enumerate(newdata['articles']):
+#         print(index+1 ," : " ,news['title'])
+#         print("Description : " ,news['description'])
+#         print("------------------------------------------------------------")
+# else:
+#     print(f"No matching news found for {category}")
+#
 
-# /v2/top-headlines
-top_headlines = newsapi.get_top_headlines(q='bitcoin',
-                                          sources='bbc-news,the-verge',
-                                          category='business',
-                                          language='en',
-                                          country='us')
-
-# /v2/everything
-all_articles = newsapi.get_everything(q='bitcoin',
-                                      sources='bbc-news,the-verge',
-                                      domains='bbc.co.uk,techcrunch.com',
-                                      from_param='2017-12-01',
-                                      to='2017-12-12',
-                                      language='en',
-                                      sort_by='relevancy',
-                                      page=2)
-
-# /v2/top-headlines/sources
-sources = newsapi.get_sources()
+c = None
+while 1:
+    c = input("enter category ")
+    if len(c):
+        print("Input got, Loop is breaking ... ")
+        break
+    else:
+        print("Input not got please do it again...")
+print("c is ",c )

@@ -154,20 +154,6 @@ while True:
             msg = "Alert, Dangerous object detected " + objectname
             print(msg)
 
-            # engine = pyttsx3.init()
-            # engine.say(msg)
-            # engine.runAndWait()
-
-            # server = "http://localhost:8000/speak/?message=" + msg
-            # try:
-            #     res = requests.get(server)
-            #     if res:
-            #         print("Speech output sent")
-            #     else:
-            #         print("Speech output not sent, ensure server is running")
-            # except Exception as e:
-            #     print(e)
-            #     print("Error while sending request, Ensure server is running")
     cv2.imshow("Frame", image)
     key = cv2.waitKey(1) & 0xFF
 
@@ -178,15 +164,7 @@ while True:
     # update the FPS counter
     fps.update()
 
-    # cv2.waitKey()
-    # cv2.destroyAllWindows()
 
-    # cv2.imshow("object detection", image)
-    # cv2.waitKey()
-        
-    # cv2.imwrite("object-detection.jpg", image)
-    # cv2.destroyAllWindows()
-# stop the timer and display FPS information
 fps.stop()
 print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
 print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
