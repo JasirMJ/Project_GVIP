@@ -10,12 +10,18 @@ import argparse
 import numpy as np
 import pyttsx3
 
+from imutils.video import VideoStream
+from imutils.video import FPS
+import imutils
+import time
+
 import requests
 from os import system
 
 config_path = 'yolov3.cfg'
 weights_path ='yolov3.weights'
 classes_path =  'yolov3.txt'
+
 
 dangerous_objects = ['person','car','motorcycle','bus','train','truck','bear','zebra',]
 
@@ -30,7 +36,12 @@ ap = argparse.ArgumentParser()
 #                 help = 'path to text file containing class names')
 args = ap.parse_args()
 
-video=cv2.VideoCapture(0)
+# video=cv2.VideoCapture(0)
+
+vs = VideoStream(src=0).start()
+time.sleep(2.0)
+fps = FPS().start()
+
 # print("Arguments readed")
 
 def get_output_layers(net):
@@ -70,9 +81,13 @@ def draw_prediction(img, class_id, confidence, x, y, x_plus_w, y_plus_h):
 # image = cv2.imread(args.image)
 # image = cv2.read(0)
 while True:
-    hasFrame,image=video.read()
+    # hasFrame,image=video.read()
+    frame = vs.read()
 
+    #
     # print("Image readed")
+
+    image = cv2.resize(frame, (300, 300))
 
     Width = image.shape[1]
     Height = image.shape[0]
@@ -139,9 +154,9 @@ while True:
             msg = "Alert, Dangerous object detected " + objectname
             print(msg)
 
-            engine = pyttsx3.init()
-            engine.say(msg)
-            engine.runAndWait()
+            # engine = pyttsx3.init()
+            # engine.say(msg)
+            # engine.runAndWait()
 
             # server = "http://localhost:8000/speak/?message=" + msg
             # try:
@@ -153,11 +168,29 @@ while True:
             # except Exception as e:
             #     print(e)
             #     print("Error while sending request, Ensure server is running")
+    cv2.imshow("Frame", image)
+    key = cv2.waitKey(1) & 0xFF
+
+    # if the `q` key was pressed, break from the loop
+    if key == ord("q"):
+        break
+
+    # update the FPS counter
+    fps.update()
+
     # cv2.waitKey()
     # cv2.destroyAllWindows()
 
-    cv2.imshow("object detection", image)
-    cv2.waitKey()
+    # cv2.imshow("object detection", image)
+    # cv2.waitKey()
         
-    cv2.imwrite("object-detection.jpg", image)
-    cv2.destroyAllWindows()
+    # cv2.imwrite("object-detection.jpg", image)
+    # cv2.destroyAllWindows()
+# stop the timer and display FPS information
+fps.stop()
+print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
+print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+
+# do a bit of cleanup
+cv2.destroyAllWindows()
+vs.stop()
