@@ -170,7 +170,7 @@ def jarvis(data):
 speak("Hi Azra, what can I do for you?")
 
 
-detect = False
+detect = True
 tellobjects = False
 exit=False
 read_text = False
@@ -196,8 +196,8 @@ speak("All set speak now")
 while 1:
     objects = []
 
-    data = recordAudio() # take input as voice commands
-    # data = input("enter your command : ") # take input as text msg
+    # data = recordAudio() # take input as voice commands
+    data = input("enter your command : ") # take input as text msg
 
     if "latest news" in data :
         country = "in"
@@ -277,7 +277,10 @@ while 1:
         speak("Thank you, another time")
 
     if detect:
-        hasFrame, image = video.read()
+        # hasFrame, image = video.read()
+        frame = video.read()
+        image = cv2.resize(frame, (800, 800))
+
         Width = image.shape[1]
         Height = image.shape[0]
         scale = 0.00392
