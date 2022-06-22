@@ -16,7 +16,7 @@ from imutils.video import FPS
 import imutils
 import time
 
-if os.name=='nt':
+if os.name == 'nt':
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 # # importing geopy library
@@ -31,22 +31,27 @@ if os.name=='nt':
 # print("Latitude = ", getLoc.latitude, "\n")
 # print("Longitude = ", getLoc.longitude)
 
+
 def speak(audioString):
     print(audioString)
     engine = pyttsx3.init()
     engine.say(audioString)
     engine.runAndWait()
 
+
 def get_output_layers(net):
     layer_names = net.getLayerNames()
     output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
     return output_layers
 
+
 def draw_prediction(img, class_id, confidence, x, y, x_plus_w, y_plus_h):
     label = str(classes[class_id])
     color = COLORS[class_id]
     cv2.rectangle(img, (x, y), (x_plus_w, y_plus_h), color, 2)
-    cv2.putText(img, label, (x - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+    cv2.putText(img, label, (x - 10, y - 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
 
 def recordAudio():
     try:
@@ -63,14 +68,15 @@ def recordAudio():
             print("recognize completed")
             MyText = MyText.lower()
             print("Did you say " + MyText)
-            return  MyText
+            return MyText
 
     except sr.RequestError as e:
         print("Could not request results; {0}".format(e))
-        return  "Not clear"
+        return "Not clear"
     except sr.UnknownValueError:
         print("unknown error occured")
         return "Unknown error occured"
+
 
 def jarvis(data):
 
@@ -80,7 +86,7 @@ def jarvis(data):
             url = "https://v2.jokeapi.dev/joke/Any"
             res = requests.get(url)
             res = res.json()
-            print("response received ",res)
+            print("response received ", res)
             qs = res['setup']
             ans = res['delivery']
             print(qs)
@@ -92,12 +98,12 @@ def jarvis(data):
             speak("Here is the answer.")
             speak(ans)
         except Exception as e:
-            print("Excepcyion occured",e)
+            print("Excepcyion occured", e)
             speak("something went wrong HA HA HA")
 
     if "check" in data:
         message = "what you want to check"
-        print("GVIP : ",message)
+        print("GVIP : ", message)
         speak(message)
 
     if "hello" in data:
@@ -158,12 +164,13 @@ def jarvis(data):
     if "where is " in data:
         data = data.split(" ")
         location = data[2]
-        print("Location :",location)
-        speak(location+ ' is some where on the earth')
+        print("Location :", location)
+        speak(location + ' is some where on the earth')
         # speak("Hold on Frank, I will show you where " + location + " is.")
         # os.system("chromium-browser https://www.google.nl/maps/place/" + location + "/&amp;")
         # os.system("chrome https://www.google.nl/maps/place/" + location + "/&amp;")
     return False
+
 
 # initialization
 # time.sleep(2)
@@ -172,28 +179,27 @@ speak("Hi Azra, what can I do for you?")
 
 detect = False
 tellobjects = False
-exit=False
+exit = False
 read_text = False
-
-
 
 
 config_path = 'yolov3.cfg'
 weights_path = 'yolov3.weights'
 classes_path = 'yolov3.txt'
 
-dangerous_objects = [#'person',
+dangerous_objects = [  # 'person',
     'car', 'motorcycle', 'bus', 'train', 'truck', 'bear', 'zebra', ]
 
 print("Please wait Video Initializing...")
 video = cv2.VideoCapture(0)
-print("Please wait VideoStream  Initializing...")
-vs = VideoStream(src=0).start()
+# print("Please wait VideoStream  Initializing...")
+# vs = VideoStream(src=0).start()
+# fps = FPS().start()
+
 # Initialize the recognizer
 print("Please wait Speach recognizer Initializing...")
 # r = sr.Recognizer()
 r = None
-fps = FPS().start()
 
 print("Starting ...")
 speak("All set speak now")
@@ -201,10 +207,10 @@ speak("All set speak now")
 while 1:
     objects = []
 
-    # data = recordAudio() # take input as voice commands
-    data = input("enter your command : ") # take input as text msg
+    data = recordAudio() # take input as voice commands
+    # data = input("enter your command : ")  # take input as text msg
 
-    if "latest news" in data :
+    if "latest news" in data:
         country = "in"
 
         speak("Tell me the news topic.")
@@ -212,7 +218,7 @@ while 1:
             category = recordAudio()
             if len(category):
                 break
-            print("Received Category is ",category)
+            print("Received Category is ", category)
 
         url = (
             f"https://newsapi.org/v2/top-headlines?country={country}&category={category}&apiKey=498b712c865a429496403df3698c9dcb")
@@ -221,7 +227,7 @@ while 1:
 
         if len(newdata['articles']):
             for index, news in enumerate(newdata['articles']):
-                title = str(index + 1) +" : "+ news['title']
+                title = str(index + 1) + " : " + news['title']
                 description = news['description']
                 print(index + 1, " : ", news['title'])
 
@@ -229,26 +235,25 @@ while 1:
                 speak("Do you want to read description?")
                 read = recordAudio()
                 if "yes" in read:
-                    desc = "Description : "+ news['description']
+                    desc = "Description : " + news['description']
                     print()
-                    print("------------------------------------------------------------")
+                    print(
+                        "------------------------------------------------------------")
                     speak(desc)
                 else:
                     speak("ok, will go for next one.")
-
 
         else:
             msg = f"No matching news found for {category}"
             speak(msg)
 
-
     if "text read" in data:
-        detect=False
+        detect = False
         tellobjects = False
         read_text = True
         speak("Place the object infront of you, i will read it for you as i can")
 
-    if read_text :
+    if read_text:
         video = cv2.VideoCapture(0)
 
         while True:
@@ -272,19 +277,19 @@ while 1:
             speak("ok, next time, till then bye")
             read_text = False
 
-    if data =="open object":
+    if data == "open object":
         tellobjects = True
         detect = True
         speak("I will update the objects what I'm able to understant.")
 
-    if data=="close object":
+    if data == "close object":
         tellobjects = False
         speak("Thank you, another time")
 
     if detect:
-        # hasFrame, image = video.read()
-        frame = vs.read()
-        image = cv2.resize(frame, (800, 800))
+        hasFrame, image = video.read()
+        # frame = vs.read()
+        # image = cv2.resize(frame, (800, 800))
 
         Width = image.shape[1]
         Height = image.shape[0]
@@ -295,7 +300,8 @@ while 1:
 
         COLORS = np.random.uniform(0, 255, size=(len(classes), 3))
         net = cv2.dnn.readNet(weights_path, config_path)
-        blob = cv2.dnn.blobFromImage(image, scale, (416, 416), (0, 0, 0), True, crop=False)
+        blob = cv2.dnn.blobFromImage(
+            image, scale, (416, 416), (0, 0, 0), True, crop=False)
         net.setInput(blob)
         outs = net.forward(get_output_layers(net))
         class_ids = []
@@ -322,7 +328,8 @@ while 1:
                     confidences.append(float(confidence))
                     boxes.append([x, y, w, h])
 
-        indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
+        indices = cv2.dnn.NMSBoxes(
+            boxes, confidences, conf_threshold, nms_threshold)
 
         msg = ""
         for i in indices:
@@ -332,25 +339,29 @@ while 1:
             y = box[1]
             w = box[2]
             h = box[3]
-            draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x + w), round(y + h))
+            draw_prediction(image, class_ids[i], confidences[i], round(
+                x), round(y), round(x + w), round(y + h))
             objectname = str(classes[class_ids[i]])
             print("Class ID : ", objectname, "Confidence : ", confidences[i])
 
-            objects.append({"name":objectname,"confidences":format(confidences[i], ".2f")})
+            objects.append(
+                {"name": objectname, "confidences": format(confidences[i], ".2f")})
 
             if objectname in dangerous_objects and confidences[i] > 0.9:
                 msg = "Alert, Dangerous object detected " + objectname
                 print(msg)
 
+        # cv2.imshow("Frame", image)
+        # key = cv2.waitKey(1000) & 0xFF
 
-        cv2.imshow("Frame", image)
-        key = cv2.waitKey(1) & 0xFF
-        if len(msg):speak(msg)
+        # if len(msg):speak(msg)
+        # print(key)
+        # # if the `q` key was pressed, break from the loop
+        # if key == ord("q") : break
 
-        # if the `q` key was pressed, break from the loop
-        if key == ord("q") : break
         # update the FPS counter
-        fps.update()
+        # fps.update()
+        # print("Open objects completed ")
 
         # cv2.imshow("object detection", image)
         # cv2.waitKey()
@@ -359,13 +370,17 @@ while 1:
         # cv2.destroyAllWindows()
 
     if tellobjects:
-        msg = "I can see " # I can see object car with confidence 0.98,
-                           # object jeep with confidence  0.98,
+        msg = "I can see "  # I can see object car with confidence 0.98,
+        # object jeep with confidence  0.98,
         for object in objects:
             msg += f" object {object['name']} with confidence {object['confidences']}, "
+        print(msg)
         speak(msg)
+        # k = input("ok ? : ")
+        # cv2.destroyAllWindows()
 
-    if data=="open eyes":
+    print("Tell object worked")
+    if data == "open eyes":
         detect = True
         speak("Im opening my eyes for you")
         print("Im opening my eyes for you")
@@ -374,19 +389,20 @@ while 1:
         detect = False
         speak("Detection is stopped")
         print("Detection is stopped")
-        video.release() #close cam
+        video.release()  # close cam
 
-    else: exit = jarvis(data)
+    else:
+        exit = jarvis(data)
 
-    print("Exit ? ",exit)
+    print("Exit ? ", exit)
     if exit:
         break
+    print("Loop Cycle completed")
 
-
-fps.stop()
-print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
-print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+# fps.stop()
+# print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
+# print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 # do a bit of cleanup
 cv2.destroyAllWindows()
-vs.stop()
+# vs.stop()
