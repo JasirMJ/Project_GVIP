@@ -18,10 +18,19 @@ import time
 import requests
 from os import system
 
+import pyttsx3
+
+
 config_path = 'yolov3.cfg'
 weights_path ='yolov3.weights'
 classes_path =  'yolov3.txt'
 
+
+def speak(audioString):
+    print(audioString)
+    engine = pyttsx3.init()
+    engine.say(audioString)
+    engine.runAndWait()
 
 dangerous_objects = ['person','car','motorcycle','bus','train','truck','bear','zebra',]
 
@@ -87,7 +96,7 @@ while True:
     #
     # print("Image readed")
 
-    image = cv2.resize(frame, (800, 800))
+    image = cv2.resize(frame, (800, 600))
 
     Width = image.shape[1]
     Height = image.shape[0]
@@ -153,9 +162,10 @@ while True:
             
             msg = "Alert, Dangerous object detected " + objectname
             print(msg)
+            # speak(msg)
 
     cv2.imshow("Frame", image)
-    key = cv2.waitKey(1) & 0xFF
+    key = cv2.waitKey(10) & 0xFF
 
     # if the `q` key was pressed, break from the loop
     if key == ord("q"):
